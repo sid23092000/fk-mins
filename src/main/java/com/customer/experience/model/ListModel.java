@@ -6,11 +6,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "product")
-public class Product {
+@Table(name = "list")
+public class ListModel {
     @Id
     @Column(name = "id")
     private int id;
+
+    @Column(name = "user_id")
+    private int userId;
 
     @Column(name = "name")
     private String name;
@@ -18,11 +21,6 @@ public class Product {
     @Column(name = "desc")
     private String desc;
 
-    @Column(name = "rating")
-    private int rating;
-
-    @Column(name = "qt_available")
-    private String qtAvailable;
 
     public int getId() {
         return id;
@@ -30,6 +28,14 @@ public class Product {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -46,22 +52,6 @@ public class Product {
 
     public void setDesc(String desc) {
         this.desc = desc;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public String getQtAvailable() {
-        return qtAvailable;
-    }
-
-    public void setQtAvailable(String qtAvailable) {
-        this.qtAvailable = qtAvailable;
     }
 
 
