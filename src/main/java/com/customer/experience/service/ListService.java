@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ListService {
     void createList(String name, String desc, int userId);
-    boolean mergeLists(List<Integer> ids);
-    boolean deleteListsByIds(List<Integer> listIds);
+    void mergeLists(String name, String desc, List<Integer> ids, int userId);
+    void deleteListsByIds(int userId, List<Integer> listIds);
 }

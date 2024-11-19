@@ -21,7 +21,7 @@ public class Lists {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "name")
+    @Column(name = "`name`")
     private String name;
 
     @Column(name = "`desc`")
