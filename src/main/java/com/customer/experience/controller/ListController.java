@@ -18,7 +18,7 @@ public class ListController {
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<String>> createList(@RequestParam String name, @RequestParam String desc
-    , @RequestHeader int userId) {
+            , @RequestHeader int userId) {
         try {
             listService.createList(name, desc, userId);
             return new ResponseEntity<>(ApiResponse.success("List created successfully"), HttpStatus.OK);
@@ -28,18 +28,27 @@ public class ListController {
     }
 
     @PostMapping("/merge")
-    public ResponseEntity<ApiResponse<String>> mergeLists(@RequestBody List<Integer> ids) {
-        boolean merged = listService.mergeLists(ids);
+    public ResponseEntity<ApiResponse<String>> mergeLists(@RequestParam String name,
+                                                          @RequestParam String desc,
+                                                          @RequestBody List<Integer> ids,
+                                                          @RequestHeader int userId) {
+        try {
+            listService.mergeLists(name, desc, ids, userId);
+            return ResponseEntity.ok(ApiResponse.success("Lists merged successfully"));
+        } catch (Exception e) {
+            return new ResponseEntity<>(ApiResponse.error("Failed to merge lists"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteLists(@RequestBody List<Integer> ids) {
-        boolean deleted = listService.deleteListsByIds(ids);
-
-        if (deleted) {
+    public ResponseEntity<ApiResponse<String>> deleteLists(@RequestBody List<Integer> ids,
+                                                           @RequestHeader Integer userId) {
+        try {
+            listService.deleteListsByIds(userId, ids);
             return ResponseEntity.ok(ApiResponse.success("Lists deleted successfully"));
-        } else {
-            return ResponseEntity.status(400).body(ApiResponse.error("Failed to delete lists"));
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(ApiResponse.error("Failed to delete list"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
