@@ -1,5 +1,6 @@
 package com.customer.experience.controller;
 
+import com.customer.experience.dto.ApiResponse;
 import com.customer.experience.dto.UserDetailsDto;
 import com.customer.experience.service.ListService;
 import com.customer.experience.service.UserService;
@@ -16,12 +17,12 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody UserDetailsDto userDetailsDto) {
+    public ResponseEntity<ApiResponse<String>> createUser(@RequestBody UserDetailsDto userDetailsDto) {
         try {
             userService.createUser(userDetailsDto);
-            return new ResponseEntity<>("User created", HttpStatus.OK);
+            return new ResponseEntity<>(ApiResponse.success("User created successfully"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(ApiResponse.error("Failed to create user"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
