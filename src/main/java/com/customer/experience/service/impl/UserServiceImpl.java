@@ -1,7 +1,7 @@
 package com.customer.experience.service.impl;
 
 import com.customer.experience.dto.UserDetailsDto;
-import com.customer.experience.model.User;
+import com.customer.experience.model.Users;
 import com.customer.experience.repository.UserRepository;
 import com.customer.experience.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(UserDetailsDto userDetailsDto) {
-        User user = new User();
-        user.setName(userDetailsDto.getName());
-        user.setEmail(userDetailsDto.getEmail());
-        user.setPhone(userDetailsDto.getPhone());
-        user.setAddress(userDetailsDto.getAddress());
+        Users users = new Users();
+        users.setName(userDetailsDto.getName());
+        users.setEmail(userDetailsDto.getEmail());
+        users.setPhone(userDetailsDto.getPhone());
+        users.setAddress(userDetailsDto.getAddress());
 
-        userRepository.save(user);
+        userRepository.save(users);
     }
 }

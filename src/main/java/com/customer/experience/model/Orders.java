@@ -1,11 +1,18 @@
 package com.customer.experience.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "order")
-public class Order {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Orders {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
