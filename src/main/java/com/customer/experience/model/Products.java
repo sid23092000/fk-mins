@@ -1,10 +1,17 @@
 package com.customer.experience.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "product")
-public class Product {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Products {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

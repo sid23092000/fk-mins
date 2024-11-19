@@ -1,8 +1,8 @@
 package com.customer.experience.repository;
 
-import java.util.List;
-
 import com.customer.experience.model.Tutorial;
+
+import java.util.List;
 
 public interface TutorialRepository {
   int save(Tutorial book);
