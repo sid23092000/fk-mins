@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,11 +27,11 @@ public class Orders {
     private int userId;
 
     @Column(name = "prod_id")
-    private String prodId;
+    private int prodId;
 
     @Column(name = "prod_name")
     private String prodName;
 
-    @Column(name = "order_date")
+    @Column(name = "date")
     private LocalDateTime orderDate;
 }
