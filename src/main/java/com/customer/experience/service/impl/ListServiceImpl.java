@@ -87,12 +87,6 @@ public class ListServiceImpl implements ListService {
             List<Items> items = itemRepository.findAllByListIdIn(ids);
 
             List<Items> newCombinedItemsList = getItems(items, listAdded);
-
-            int newListId = listAdded.getId();
-
-            for (Items item : items) {
-                item.setListId(newListId);
-            }
             itemRepository.saveAll(newCombinedItemsList);
 
         } catch (Exception e) {
