@@ -31,9 +31,9 @@ public class Products {
     @Column(name = "rating")
     private int rating;
 
-    @Column(name = "desc")
+    @Column(name = "brand")
     private String brand;
 
     @Column(name = "qt_available")
-    private String qtAvailable;
+    private int qtAvailable;
 }
