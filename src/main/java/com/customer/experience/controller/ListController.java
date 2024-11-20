@@ -32,12 +32,10 @@ public class ListController {
     @GetMapping("/fetch")
     public ResponseEntity<ApiResponse<List<ListsDescDto>>> fetchLists(@RequestHeader("user_id") String userId){
         try {
-            System.out.println("getting data for userid :" + userId);
             List<ListsDescDto> lists = listService.fetchLists(Integer.parseInt(userId));
             ApiResponse<List<ListsDescDto>> response = new ApiResponse<>(HttpStatus.OK, "Data fetched successfully", lists);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("getting data error for userid :" + userId);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -45,12 +43,10 @@ public class ListController {
     @GetMapping("/{list_id}/fetch")
     public ResponseEntity<ApiResponse<ListItemsDetailsDto>> fetchListItems(@RequestHeader("user_id") String userId, @PathVariable("list_id") String listId){
         try {
-            System.out.println("getting data for listid :" + listId);
             ListItemsDetailsDto listItems = listService.fetchListItems(Integer.parseInt(listId));
             ApiResponse<ListItemsDetailsDto> response = new ApiResponse<>(HttpStatus.OK, "Data fetched successfully", listItems);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("getting data error for listid :" + listId);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -28,8 +28,8 @@ public class ItemController {
     private ItemService itemService;
     private static final Logger log = LoggerFactory.getLogger(ItemController.class);
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<String>> createItem(@RequestBody List<ItemsDetailsDto> itemsDetailsDtoList, @RequestHeader int userId) {
+    @PostMapping("/create/{list_id}")
+    public ResponseEntity<ApiResponse<String>> createItem(@RequestBody List<ItemsDetailsDto> itemsDetailsDtoList, @RequestHeader int userId, @PathVariable("list_id") int listId) {
 
         try{
             List<Items> items = new ArrayList<>();
@@ -37,7 +37,7 @@ public class ItemController {
                 Items item = new Items();
                 item.setName(itemVal.getName());
                 item.setQuantity(itemVal.getQuantity());
-                item.setListId(itemVal.getListId());
+                item.setListId(listId);
                 items.add(item);
             }
             itemService.addAllItemByNameAndQuantity(items);
@@ -48,13 +48,15 @@ public class ItemController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{list_id}")
     public ResponseEntity<ApiResponse<String>> deleteLists(@RequestBody List<Integer> ids,
-                                                           @RequestHeader Integer userId) {
+                                                           @RequestHeader Integer userId,
+                                                           @PathVariable("list_id") Integer listId) {
         try {
-            itemService.deleteListsByIds(userId, ids);
+            itemService.deleteItemsByIdsAndListId(userId, ids, listId);
             return ResponseEntity.ok(ApiResponse.success("Lists deleted successfully"));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(ApiResponse.error("Failed to delete list"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -22,14 +24,28 @@ public class ItemServiceImpl implements ItemService {
             itemRepository.saveAll(items);
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw e;
         }
     }
     @Override
-    public void deleteListsByIds(int userId, List<Integer> listIds) {
+    @Transactional
+    public void deleteItemsByIdsAndListId(int userId, List<Integer> itemIds, int listId) throws Exception {
         try {
-            itemRepository.deleteAllById(listIds);
+            if(itemIds == null || itemIds.isEmpty()){
+                throw new Exception("Item list is empty");
+            }
+            Optional<List<Items>> itemsOptional = itemRepository.findByListId(listId);
+            if(itemsOptional.isPresent()){
+                log.info("Item list is not empty");
+                itemRepository.deleteAllByIdInAndListId(itemIds, listId);
+            }else{
+                throw new Exception("Item list is empty 1");
+            }
+
+
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw e;
         }
     }
 }

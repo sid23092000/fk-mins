@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ItemService {
     void addAllItemByNameAndQuantity(List<Items> items);
-    void deleteListsByIds(int userId, List<Integer> listIds);
+    void deleteItemsByIdsAndListId(int userId, List<Integer> listIds, int listId) throws Exception;
 }

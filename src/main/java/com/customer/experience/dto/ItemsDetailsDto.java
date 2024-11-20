@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemsDetailsDto {
-    private int listId;
     private String name;
     private int quantity;
 }

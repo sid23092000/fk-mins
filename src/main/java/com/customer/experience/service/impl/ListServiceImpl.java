@@ -53,7 +53,6 @@ public class ListServiceImpl implements ListService {
         try {
             listItems = itemRepository.findAllByListId(listId);
             if (listItems.isEmpty()) {
-                System.out.println("samir2");
                 return null;
             }
             ListItemsDetailsDto listItemsDetailsDto = new ListItemsDetailsDto();
@@ -63,15 +62,14 @@ public class ListServiceImpl implements ListService {
                 ItemsDetailsDto dto = new ItemsDetailsDto();
                 dto.setName(item.getName());
                 dto.setQuantity(item.getQuantity());
-                dto.setListId(item.getListId());// Assuming quantity is stored as a String
                 itemsDetailsDtoList.add(dto);
             }
 
             listItemsDetailsDto.setItems(itemsDetailsDtoList);
             return listItemsDetailsDto;
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            return null;
+            log.error(e.getMessage());
+            throw e;
         }
     }
 }
