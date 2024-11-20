@@ -14,7 +14,11 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Override
-    public void createUser(UserDetailsDto userDetailsDto) {
+    public void createUser(UserDetailsDto userDetailsDto) throws Exception {
+        if (userDetailsDto == null) {
+            throw new Exception("User details not received in the request");
+        }
+
         Users users = new Users();
         users.setName(userDetailsDto.getName());
         users.setEmail(userDetailsDto.getEmail());

@@ -2,14 +2,17 @@ package com.customer.experience.service.impl;
 
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Lists;
+import com.customer.experience.model.Users;
 import com.customer.experience.repository.ItemsRepository;
 import com.customer.experience.repository.ListRepository;
+import com.customer.experience.repository.UserRepository;
 import com.customer.experience.service.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,34 +24,52 @@ public class ListServiceImpl implements ListService {
     @Autowired
     ItemsRepository itemsRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
 
     @Override
     public void createList(String name, String desc, int userId) {
-        log.info("[createList] creating list for the user = {}", userId);
-        Lists lists = new Lists();
-        lists.setName(name);
-        lists.setDesc(desc);
-        lists.setUserId(userId);
-        listRepository.save(lists);
-    }
-
-    @Override
-    public void deleteListsByIds(int userId, List<Integer> listIds) {
         try {
-            listRepository.deleteByIdInAndUserId(listIds, userId);
+            log.info("[createList] creating list for the user = {}", userId);
+            Lists newList = new Lists();
+            newList.setName(name);
+            newList.setDesc(desc);
+            newList.setUserId(userId);
+            listRepository.save(newList);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
     @Override
-    public void mergeLists(String name, String desc, List<Integer> ids, int userId) {
+    public void deleteListsByIds(int userId, List<Integer> listIds) throws Exception {
+
+        if(listIds == null || listIds.isEmpty()) {
+            throw new Exception("List ids not found");
+        }
+
+        Optional<Users> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()) {
+            listRepository.deleteByIdInAndUserId(listIds, userId);
+        } else {
+            throw new Exception("User not found");
+        }
+    }
+
+    @Override
+    public void mergeLists(String name, String desc, List<Integer> ids, int userId) throws Exception {
         try {
+
+            if(ids.isEmpty() || ids.size() == 1) {
+                throw new Exception("Either single list is passed or list is empty");
+            }
+
             // Step 1: Retrieve the original lists based on the provided IDs
             List<Lists> lists = listRepository.findAllById(ids);
 
             if (lists.isEmpty()) {
-                throw new RuntimeException("No lists found with the provided IDs.");
+                throw new Exception("No lists found with the provided IDs.");
             }
 
             // Step 2: Create a new merged list with the provided name, description, and userId
@@ -72,8 +93,7 @@ public class ListServiceImpl implements ListService {
             itemsRepository.saveAll(items);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while merging lists: " + e.getMessage());
+            throw new Exception("Error while merging lists: " + e.getMessage());
         }
     }
 
