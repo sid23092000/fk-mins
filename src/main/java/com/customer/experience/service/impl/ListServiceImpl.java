@@ -71,37 +71,53 @@ public class ListServiceImpl implements ListService {
                 throw new Exception("Either single list is passed or list is empty");
             }
 
-            // Step 1: Retrieve the original lists based on the provided IDs
             List<Lists> lists = listRepository.findAllById(ids);
 
             if (lists.isEmpty()) {
                 throw new Exception("No lists found with the provided IDs.");
             }
 
-            // Step 2: Create a new merged list with the provided name, description, and userId
             Lists newList = new Lists();
             newList.setName(name);
             newList.setDesc(desc);
             newList.setUserId(userId);
 
-            // Save the new merged list
             Lists listAdded = listRepository.save(newList);
 
-            // Retrieve all items associated with the original lists using the same IDs
-            List<Items> items = itemRepository.findAllById(ids);
+            List<Items> items = itemRepository.findAllByListIdIn(ids);
 
-            // Update the listId for all the items to point to the new merged list
-            int newListId = listAdded.getId();  // Get the ID of the newly saved list
+            List<Items> newCombinedItemsList = getItems(items, listAdded);
+
+            int newListId = listAdded.getId();
 
             for (Items item : items) {
-                item.setListId(newListId);  // Update each item's listId to the new list's ID
+                item.setListId(newListId);
             }
-            itemRepository.saveAll(items);
+            itemRepository.saveAll(newCombinedItemsList);
 
         } catch (Exception e) {
             throw new Exception("Error while merging lists: " + e.getMessage());
         }
     }
+
+    private static List<Items> getItems(List<Items> items, Lists listAdded) throws Exception {
+        if(items.isEmpty()) {
+            throw new Exception("No items found to merge list");
+        }
+        // Update the listId for all the items to point to the new merged list
+        int newListId = listAdded.getId();  // Get the ID of the newly saved list
+
+        List<Items> newCombinedItemsList = new ArrayList<>();
+        for (Items item : items) {
+            Items newItem = new Items();
+            newItem.setListId(newListId);  // Update each item's listId to the new list's ID
+            newItem.setName(item.getName());
+            newItem.setQuantity(item.getQuantity());
+            newCombinedItemsList.add(newItem);
+        }
+        return newCombinedItemsList;
+    }
+
     @Override
     public List<ListsDescDto> fetchLists(int userId) {
         log.info("[fetchListModel] fetching list for the user = {}", userId);
