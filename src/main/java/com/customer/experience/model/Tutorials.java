@@ -1,24 +1,24 @@
 package com.customer.experience.model;
 
-public class Tutorial {
+public class Tutorials {
 
   private long id;
   private String title;
   private String description;
   private boolean published;
 
-  public Tutorial() {
+  public Tutorials() {
 
   }
   
-  public Tutorial(long id, String title, String description, boolean published) {
+  public Tutorials(long id, String title, String description, boolean published) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.published = published;
   }
 
-  public Tutorial(String title, String description, boolean published) {
+  public Tutorials(String title, String description, boolean published) {
     this.title = title;
     this.description = description;
     this.published = published;
