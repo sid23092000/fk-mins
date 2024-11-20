@@ -1,6 +1,7 @@
 package com.customer.experience.service.impl;
 
 import com.customer.experience.Utils.VernacWrapper;
+import com.customer.experience.dto.ItemsDetailsDto;
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Products;
 import com.customer.experience.repository.ProductRepository;
@@ -21,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     private OrderService orderService;
 
     @Override
-    public List<Products> fetchProducts(int userId, List<Items> items) {
+    public List<Products> fetchProducts(int userId, List<ItemsDetailsDto> items) {
 
         List<Products> products=productRepository.findAll();
         VernacWrapper vernacWrapper=new VernacWrapper();

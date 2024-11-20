@@ -14,11 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "item")
 public class Items {
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-public class Items {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
