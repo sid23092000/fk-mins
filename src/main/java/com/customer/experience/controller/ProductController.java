@@ -1,8 +1,10 @@
 package com.customer.experience.controller;
 
+import com.customer.experience.dto.ListItemsDetailsDto;
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Products;
 import com.customer.experience.repository.ProductRepository;
+import com.customer.experience.service.ListService;
 import com.customer.experience.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,17 +26,18 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ListService listService;
+
     @GetMapping("/fetch")
-    public ResponseEntity<List<Products>> fetchProducts(@RequestParam String listId, @RequestHeader int userId) {
+    public ResponseEntity<List<Products>> fetchProducts(@RequestParam int listId, @RequestHeader int userId) {
 
         try {
 
-            //to be changed
-            ListController listController= new ListController();
-            List<Items> listItems =  listController.fetchListItems(listId, userId).getBody();
-            //
 
-            List<Products> products=productService.fetchProducts(userId, listItems);
+            ListItemsDetailsDto listItems= listService.fetchListItems(listId);
+
+            List<Products> products=productService.fetchProducts(userId, listItems.getItems() );
             List<Products> recommendedProducts=productService.fetchRecommendedProducts(userId, products);
             return new ResponseEntity<>(recommendedProducts, HttpStatus.OK);
         } catch (Exception e) {

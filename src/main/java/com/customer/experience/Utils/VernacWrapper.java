@@ -1,6 +1,7 @@
 package com.customer.experience.Utils;
 
 import com.customer.experience.controller.ProductController;
+import com.customer.experience.dto.ItemsDetailsDto;
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Products;
 import org.json.JSONArray;
@@ -117,7 +118,7 @@ public class VernacWrapper {
 
     }
 
-    public List<Products> directMatcher(List<Items> itemList, List<Products> productList)
+    public List<Products> directMatcher(List<ItemsDetailsDto> itemList, List<Products> productList)
     {
 
 
@@ -145,7 +146,7 @@ public class VernacWrapper {
 
         productNames.append("Here are the list of items that are present in the hand written list: ");
 
-        for(Items items:itemList)
+        for(ItemsDetailsDto items:itemList)
         {
             productNames.append(items.getName());
             productNames.append(", ");
