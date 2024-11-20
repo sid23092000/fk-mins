@@ -31,48 +31,9 @@ public class Products {
     @Column(name = "rating")
     private int rating;
 
+    @Column(name = "desc")
+    private String brand;
+
     @Column(name = "qt_available")
     private String qtAvailable;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public String getQtAvailable() {
-        return qtAvailable;
-    }
-
-    public void setQtAvailable(String qtAvailable) {
-        this.qtAvailable = qtAvailable;
-    }
-
-
 }

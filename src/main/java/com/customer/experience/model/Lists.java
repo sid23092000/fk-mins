@@ -24,5 +24,4 @@ public class Lists {
 
     @Column(name = "`desc`")
     private String desc;
-
 }

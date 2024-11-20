@@ -10,7 +10,6 @@ public class SpringBootJdbctemplateMysqlApplication {
 
 	public static void main(String[] args) {
 		 SpringApplication.run(SpringBootJdbctemplateMysqlApplication.class, args);
-//		ListController listController = context.getBean(ListController.class);
 	}
 
 }
