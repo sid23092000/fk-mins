@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +13,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "item")
+public class Items {
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public class Items {
 
     @Id
