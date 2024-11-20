@@ -1,8 +1,6 @@
 package com.customer.experience.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -21,7 +19,7 @@ public class Lists {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "`name`")
+    @Column(name = "name")
     private String name;
 
     @Column(name = "`desc`")

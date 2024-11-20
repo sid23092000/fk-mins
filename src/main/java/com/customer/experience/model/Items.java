@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "item")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "item")
 public class Items {
 
     @Id
@@ -25,5 +25,5 @@ public class Items {
     private String name;
 
     @Column(name = "quantity")
-    private String quantity;
+    private int quantity;
 }

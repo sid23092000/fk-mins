@@ -1,9 +1,12 @@
 package com.customer.experience.service.impl;
 
+import com.customer.experience.dto.ItemsDetailsDto;
+import com.customer.experience.dto.ListItemsDetailsDto;
+import com.customer.experience.dto.ListsDescDto;
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Lists;
+import com.customer.experience.repository.ItemRepository;
 import com.customer.experience.model.Users;
-import com.customer.experience.repository.ItemsRepository;
 import com.customer.experience.repository.ListRepository;
 import com.customer.experience.repository.UserRepository;
 import com.customer.experience.service.ListService;
@@ -14,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 public class ListServiceImpl implements ListService {
@@ -22,7 +28,7 @@ public class ListServiceImpl implements ListService {
     ListRepository listRepository;
 
     @Autowired
-    ItemsRepository itemsRepository;
+    ItemRepository itemRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -82,7 +88,7 @@ public class ListServiceImpl implements ListService {
             Lists listAdded = listRepository.save(newList);
 
             // Retrieve all items associated with the original lists using the same IDs
-            List<Items> items = itemsRepository.findAllById(ids);
+            List<Items> items = itemRepository.findAllById(ids);
 
             // Update the listId for all the items to point to the new merged list
             int newListId = listAdded.getId();  // Get the ID of the newly saved list
@@ -90,10 +96,43 @@ public class ListServiceImpl implements ListService {
             for (Items item : items) {
                 item.setListId(newListId);  // Update each item's listId to the new list's ID
             }
-            itemsRepository.saveAll(items);
+            itemRepository.saveAll(items);
 
         } catch (Exception e) {
             throw new Exception("Error while merging lists: " + e.getMessage());
+        }
+    }
+    @Override
+    public List<ListsDescDto> fetchLists(int userId) {
+        log.info("[fetchListModel] fetching list for the user = {}", userId);
+        List<Lists> lists = listRepository.findAllByUserId(userId);
+        return lists.stream().map(list -> new ListsDescDto(list.getId(), list.getName(), list.getDesc())).collect(Collectors.toList());
+    }
+
+    @Override
+    public ListItemsDetailsDto fetchListItems(int listId) {
+        log.info("[fetchListModel] fetching list items for the list = {}", listId);
+        List<Items> listItems;
+        try {
+            listItems = itemRepository.findAllByListId(listId);
+            if (listItems.isEmpty()) {
+                return new ListItemsDetailsDto();
+            }
+            ListItemsDetailsDto listItemsDetailsDto = new ListItemsDetailsDto();
+            listItemsDetailsDto.setId(listId);
+            ArrayList<ItemsDetailsDto> itemsDetailsDtoList = new ArrayList<>();
+            for (Items item : listItems) {
+                ItemsDetailsDto dto = new ItemsDetailsDto();
+                dto.setName(item.getName());
+                dto.setQuantity(item.getQuantity());
+                itemsDetailsDtoList.add(dto);
+            }
+
+            listItemsDetailsDto.setItems(itemsDetailsDtoList);
+            return listItemsDetailsDto;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw e;
         }
     }
 
