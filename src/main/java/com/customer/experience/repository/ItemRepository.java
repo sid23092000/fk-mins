@@ -12,4 +12,5 @@ public interface ItemRepository extends JpaRepository<Items, Integer> {
     List<Items> findAllByListId(int id);
     void deleteAllByIdInAndListId(List<Integer> itemIds, int listId);
     Optional<List<Items>> findByListId(int listId);
+    List<Items> findAllByListIdIn(List<Integer> ids);
 }
