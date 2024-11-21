@@ -17,7 +17,7 @@ public class ListTextController {
 
 
     @PostMapping(value = "/text", consumes = "text/plain")
-    public ResponseEntity<String> fetchProducts(@RequestBody String text,
+    public ResponseEntity<String> postProducts(@RequestBody String text,
                                                    @RequestHeader(value = "userId") int userId,
                                                 @RequestParam(value = "listId") int listId) {
         try {
