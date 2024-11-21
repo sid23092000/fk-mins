@@ -36,14 +36,16 @@ public class ListServiceImpl implements ListService {
 
 
     @Override
-    public void createList(String name, String desc, int userId) {
+    public Integer createList(String name, String desc, int userId) {
         try {
             log.info("[createList] creating list for the user = {}", userId);
             Lists newList = new Lists();
             newList.setName(name);
             newList.setDesc(desc);
             newList.setUserId(userId);
-            listRepository.save(newList);
+            Lists lists = listRepository.save(newList);
+            return lists.getId();
+
         } catch (Exception e) {
             throw e;
         }
