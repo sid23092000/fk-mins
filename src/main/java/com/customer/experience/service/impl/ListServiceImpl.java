@@ -60,6 +60,11 @@ public class ListServiceImpl implements ListService {
 
         Optional<Users> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()) {
+            List<Items> itemsForList = itemRepository.findAllByListIdIn(listIds);
+            List<Integer> itemIds = itemsForList.stream()
+                    .map(Items::getId)
+                    .collect(Collectors.toList());
+            itemRepository.deleteAllById(itemIds);
             listRepository.deleteByIdInAndUserId(listIds, userId);
         } else {
             throw new Exception("User not found");
