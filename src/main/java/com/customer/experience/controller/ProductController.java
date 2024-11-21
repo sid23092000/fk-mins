@@ -1,5 +1,6 @@
 package com.customer.experience.controller;
 
+import com.customer.experience.dto.ApiResponse;
 import com.customer.experience.dto.ListItemsDetailsDto;
 import com.customer.experience.model.Items;
 import com.customer.experience.model.Products;
@@ -72,7 +73,20 @@ public class ProductController {
         return new ResponseEntity<>(productRepository.findAll(), HttpStatus.OK);
     }
 
-
+    @GetMapping("/{prodName}")
+    public ResponseEntity<ApiResponse<List<Products>>> getProductByName(@PathVariable("prodName") String prodName, @RequestHeader int userId) {
+        try {
+            List<Products> product = productService.findProductByName(prodName, userId);
+            if (product != null) {
+                ApiResponse<List<Products>> response = new ApiResponse<>(HttpStatus.OK, "Data fetched successfully", product);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(ApiResponse.error("Product not found"), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(ApiResponse.error("Failed to fetch product"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 }
