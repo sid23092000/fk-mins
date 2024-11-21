@@ -55,4 +55,14 @@ public class ProductServiceImpl implements ProductService {
         return recommendedProducts;
 
     }
+
+    @Override
+    public List<Products> findProductByName(String productName, int userId) {
+        try {
+            List<Products> productsList = productRepository.findAllByName(productName);
+            return productsList;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -15,4 +15,5 @@ public interface ProductService {
     public List<Products> fetchProducts(int userId, List<ItemsDetailsDto> items);
 
     public List<Products> fetchRecommendedProducts(int userId, List<Products> products);
+    public List<Products> findProductByName(String productName, int userId);
 }
