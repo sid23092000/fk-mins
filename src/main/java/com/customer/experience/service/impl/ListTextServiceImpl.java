@@ -18,6 +18,8 @@ public class ListTextServiceImpl implements ListTextService {
 
             ListText listText = new ListText();
 
+            listTextRepository.deleteById(listId);
+
             listText.setListId(listId);
             listText.setText(listTextDto);
             listTextRepository.save(listText);
