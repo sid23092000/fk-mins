@@ -20,8 +20,15 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     ItemRepository itemRepository;
     @Override
-    public void addAllItemByNameAndQuantity(List<Items> items) {
+    public void addAllItemByNameAndQuantity(List<Items> items, int listId) throws Exception {
         try{
+            Optional<List<Items>> itemsOptional = itemRepository.findByListId(listId);
+            if(itemsOptional.isPresent()){
+                log.info("Item list is not empty");
+                itemRepository.deleteAllByListId(listId);
+            }else{
+                log.info("Item list is empty");
+            }
             itemRepository.saveAll(items);
         } catch (Exception e) {
             log.error(e.getMessage());
