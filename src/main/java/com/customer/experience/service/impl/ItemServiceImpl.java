@@ -17,8 +17,10 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class ItemServiceImpl implements ItemService {
+
     @Autowired
     ItemRepository itemRepository;
+
     @Override
     public void addAllItemByNameAndQuantity(List<Items> items, int listId) throws Exception {
         try{

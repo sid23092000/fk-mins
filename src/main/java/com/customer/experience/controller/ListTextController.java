@@ -18,16 +18,24 @@ public class ListTextController {
 
     @PostMapping(value = "/text", consumes = "text/plain")
     public ResponseEntity<String> postProducts(@RequestBody String text,
-                                                   @RequestHeader(value = "userId") int userId,
-                                                @RequestParam(value = "listId") int listId) {
-        try {
-            System.out.println(text);
-            listTextService.saveListText(userId, listId, text);
-            return new ResponseEntity<>("List text saved successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println("Error in fetching the actual products");
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                                               @RequestHeader(value = "userId") int userId,
+                                               @RequestParam(value = "listId") int listId) {
+        int attempts = 0;
+        boolean success = false;
+        while (!success && attempts < 10) {
+            try {
+                listTextService.saveListText(userId, listId, text);
+                success = true;
+                return new ResponseEntity<>("List text saved successfully", HttpStatus.OK);
+            } catch (Exception e) {
+                attempts++;
+                if (attempts >= 10) {
+                    System.out.println("Error in saving the list text after 3 attempts");
+                    return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
         }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/{listId}/text")

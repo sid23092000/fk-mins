@@ -404,5 +404,88 @@ public class VernacWrapper {
 
 
     }
+
+
+    public List<Items> getListFromText(int userId, int listId, String listTextDto){
+        int retries = 0;
+        int maxRetries = 5;
+
+
+        ProductController productController=new ProductController();
+
+
+
+        StringBuilder productNames = new StringBuilder("Here is a grocery list a person has prepared:");
+
+
+        productNames.append("\n");
+
+        productNames.append(listTextDto);
+
+        productNames.append("\n");
+
+        productNames.append("I want you to return me the complete list of items that are there in the grocery list and the quantity mentioned as it is. Give in a json format please with key as \"this_item\" and \"this_quantity\". Both key and value should be of type String. Also everytime the object name should be result.");
+
+        System.out.println(productNames);
+
+
+        try {
+            disableSSLVerification();
+            // Set up the HTTP connection
+            URL url = new URL(API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", "Bearer " + API_KEY);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            // Create JSON body
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("role", "user");
+
+            messageObject.put("content", productNames);
+
+            JSONArray messagesArray = new JSONArray();
+            messagesArray.put(messageObject);
+
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("model", "llama3-8b-8192");
+            jsonBody.put("messages", messagesArray);
+
+            // Write JSON body to the request
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Read the response
+            if (conn.getResponseCode() == 429) {
+
+                retries++;
+                return extractProductsFromUsage("Rate limit exceeded. Retrying in " + (2 * retries) + " seconds...",listId);
+
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line.trim());
+            }
+            in.close();
+
+            // Parse and print the response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            String reply = jsonResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+
+            return extractProductsFromUsage(reply,listId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return null;
+    }
 }
 

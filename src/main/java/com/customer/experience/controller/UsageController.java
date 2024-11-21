@@ -37,7 +37,7 @@ public class UsageController {
                 try {
 
                     items = vernacWrapper.generateUsageBasedList(input, curr_listId);
-                    itemService.addAllItemByNameAndQuantity(items);
+                    itemService.addAllItemByNameAndQuantity(items, curr_listId);
                     success = true;
                 } catch (Exception e) {
                     attempts++;
