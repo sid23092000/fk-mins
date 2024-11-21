@@ -24,11 +24,12 @@ public class ListController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<String>> createList(@RequestParam String name, @RequestParam String desc
+    public ResponseEntity<ApiResponse<Integer>> createList(@RequestParam String name, @RequestParam String desc
             , @RequestHeader int userId) {
         try {
-            listService.createList(name, desc, userId);
-            return new ResponseEntity<>(ApiResponse.success("List created successfully"), HttpStatus.OK);
+            Integer id = listService.createList(name, desc, userId);
+            ApiResponse<Integer> response = new ApiResponse<>(HttpStatus.OK, "Data fetched successfully", id);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(ApiResponse.error("Failed to create list"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
