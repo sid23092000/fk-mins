@@ -58,6 +58,5 @@ public class ListTextServiceImpl implements ListTextService {
     @Override
     public ListText fetchListText(int userId, int listId) {
         return listTextRepository.findByListId(listId);
-
     }
 }

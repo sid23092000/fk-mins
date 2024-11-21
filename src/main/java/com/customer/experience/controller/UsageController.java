@@ -32,7 +32,7 @@ public class UsageController {
             List<Items> items = null;
             boolean success = false;
             int attempts = 0;
-            int curr_listId= listService.createList("Usage Based List", "List generated based on usage", userId);
+            int curr_listId= listService.createList(input, input +" based usage", userId);
             while (!success && attempts < 10) {
                 try {
 

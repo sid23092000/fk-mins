@@ -49,6 +49,7 @@ public class ListServiceImpl implements ListService {
             newList.setDesc(desc);
             newList.setUserId(userId);
             Lists lists = listRepository.save(newList);
+            listTextService.saveListText(userId, newList.getId(), "");
             return lists.getId();
 
         } catch (Exception e) {
