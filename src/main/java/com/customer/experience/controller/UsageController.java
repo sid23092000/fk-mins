@@ -32,9 +32,11 @@ public class UsageController {
             List<Items> items = null;
             boolean success = false;
             int attempts = 0;
+            int curr_listId= listService.createList("Usage Based List", "List generated based on usage", userId);
             while (!success && attempts < 10) {
                 try {
-                    items = vernacWrapper.generateUsageBasedList(input, 1);
+
+                    items = vernacWrapper.generateUsageBasedList(input, curr_listId);
                     itemService.addAllItemByNameAndQuantity(items);
                     success = true;
                 } catch (Exception e) {
