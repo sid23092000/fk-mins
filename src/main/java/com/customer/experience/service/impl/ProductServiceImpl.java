@@ -25,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Products> fetchProducts(int userId, List<ItemsDetailsDto> items) {
 
         List<Products> products=productRepository.findAll();
+
         VernacWrapper vernacWrapper=new VernacWrapper();
         return vernacWrapper.directMatcher(items,products);
     }

@@ -227,7 +227,6 @@ public class VernacWrapper {
         for (Products product : prodDB) {
             if (response.toLowerCase().contains(product.getName().toLowerCase())) {
                 matchedProducts.add(product);
-                break;
             }
         }
         return matchedProducts;

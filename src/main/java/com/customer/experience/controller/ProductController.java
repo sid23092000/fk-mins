@@ -39,6 +39,7 @@ public class ProductController {
             ListItemsDetailsDto listItems= listService.fetchListItems(listId);
 
             List<Products> products=productService.fetchProducts(userId, listItems.getItems());
+
             List<Products> recommendedProducts=productService.fetchRecommendedProducts(userId, products);
             return new ResponseEntity<>(recommendedProducts, HttpStatus.OK);
         } catch (Exception e) {
