@@ -2,18 +2,19 @@ package com.customer.experience.Utils;
 
 import com.customer.experience.controller.ProductController;
 import com.customer.experience.dto.ItemsDetailsDto;
-import com.customer.experience.model.Items;
-import com.customer.experience.model.Products;
+import com.customer.experience.model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 public class VernacWrapper {
 
@@ -21,6 +22,7 @@ public class VernacWrapper {
     private static final String API_KEY = "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";
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
     private static String usage = "";
+
 
 
     private static void disableSSLVerification() throws Exception {
@@ -42,23 +44,11 @@ public class VernacWrapper {
 
     public boolean checkNameMatching(String itemName1, String itemName2)
     {
-
-
         int retries = 0;
-
         int maxRetries = 5;
 
-
-
         ProductController productController=new ProductController();
-
-
-
-       StringBuilder productNames = new StringBuilder("Here are the list of items that are present in my database: ");
-
-
-
-
+        StringBuilder productNames = new StringBuilder("Here are the list of items that are present in my database: ");
             try {
                 disableSSLVerification();
                 // Set up the HTTP connection
@@ -111,10 +101,8 @@ public class VernacWrapper {
 
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
-
-        return cleanResponse("Unexpected error occurred.");
+            return cleanResponse("Unexpected error occurred.");
 
     }
 
@@ -243,6 +231,178 @@ public class VernacWrapper {
             }
         }
         return matchedProducts;
+    }
+
+
+
+    public List<Items> generateUsageBasedList(String usage, int listId)
+    {
+
+
+        int retries = 0;
+        int maxRetries = 5;
+
+
+        ProductController productController=new ProductController();
+
+
+
+        StringBuilder productNames = new StringBuilder("Here is the usage:");
+
+
+        productNames.append("\n");
+
+        productNames.append(usage);
+
+        productNames.append("I want you to return me the list of ingredients needed and the quantity required by a single person in an enumerated format. Exclude the items that are not generally ordered from an online platform.Give in a json format please with key as \"this_item\" and \"this_quantity\". Both key and value should be of type String. Also everytime the object name should be result.");
+
+
+
+
+        try {
+            disableSSLVerification();
+            // Set up the HTTP connection
+            URL url = new URL(API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", "Bearer " + API_KEY);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            // Create JSON body
+            JSONObject messageObject = new JSONObject();
+            messageObject.put("role", "user");
+
+            messageObject.put("content", productNames);
+
+            JSONArray messagesArray = new JSONArray();
+            messagesArray.put(messageObject);
+
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("model", "llama3-8b-8192");
+            jsonBody.put("messages", messagesArray);
+
+            // Write JSON body to the request
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            // Read the response
+            if (conn.getResponseCode() == 429) {
+
+                retries++;
+                return extractProductsFromUsage("Rate limit exceeded. Retrying in " + (2 * retries) + " seconds...",listId);
+
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line.trim());
+            }
+            in.close();
+
+            // Parse and print the response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            String reply = jsonResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+
+            return extractProductsFromUsage(reply,listId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        return null;
+
+    }
+
+    public List<Items> extractProductsFromUsage(String response,int listId){
+        System.out.println(response);
+        System.out.println("------------------");
+       return extractAndProcess(response,listId);
+
+    }
+
+
+
+    public List<Items> extractAndProcess(String input,int listId) {
+        try {
+            // Extract JSON array from the input string
+            int startIndex = input.indexOf("{");
+            int endIndex = input.lastIndexOf("}") + 1;
+
+            if (startIndex == -1 || endIndex == 0) {
+                System.out.println("No valid JSON array found in input.");
+                return null;
+            }
+
+            System.out.println(startIndex);
+            System.out.println(endIndex);
+
+            String jsonArrayString = "[" + input.substring(startIndex, endIndex) + "]";
+            System.out.println(jsonArrayString);
+
+
+            JSONArray jsonArray = new JSONArray(jsonArrayString);
+            JSONObject firstObject = jsonArray.getJSONObject(0);
+            JSONArray resultArray = firstObject.getJSONArray("result");
+
+            List<String> items = new ArrayList<>();
+            List<String> quantities = new ArrayList<>();
+
+            for (int i = 0; i < resultArray.length(); i++) {
+                JSONObject itemObject = resultArray.getJSONObject(i);
+                items.add(itemObject.getString("this_item"));
+                quantities.add(itemObject.getString("this_quantity"));
+            }
+
+            System.out.println("Items: " + items);
+            System.out.println("Quantities: " + quantities);
+
+
+
+            List<Items> finalList=new ArrayList<>();
+
+            for(int i=0;i<items.size();i++)
+            {
+                Items item = new Items();
+                item.setName(items.get(i));
+                item.setQuantity(convertToInteger(quantities.get(i)));
+                item.setListId(listId);
+                System.out.println(item.getName());
+                System.out.println(item.getQuantity());
+                System.out.println(item.getListId());
+                finalList.add(item);
+            }
+
+            return finalList;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error in parsing the JSON input.");
+        }
+        return null;
+    }
+
+
+    public int convertToInteger(String quantity) {
+
+        StringBuilder number = new StringBuilder();
+        number.append(0);
+        for (char c : quantity.toCharArray()) {
+            if (Character.isDigit(c) || c == '.') {
+                number.append(c);
+            } else {
+                break;
+            }
+        }
+        double value = Double.parseDouble(number.toString());
+        return (int) Math.ceil(value);
+
+
     }
 }
 
