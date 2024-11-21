@@ -11,6 +11,7 @@ import com.customer.experience.model.Lists;
 import com.customer.experience.repository.ListRepository;
 import com.customer.experience.repository.UserRepository;
 import com.customer.experience.service.ListService;
+import com.customer.experience.service.ListTextService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,9 @@ public class ListServiceImpl implements ListService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ListTextService listTextService;
 
 
     @Override
@@ -96,6 +101,12 @@ public class ListServiceImpl implements ListService {
 
             List<Items> newCombinedItemsList = getItems(items, listAdded);
             itemRepository.saveAll(newCombinedItemsList);
+            AtomicInteger counter = new AtomicInteger(1);
+
+            String formattedText = newCombinedItemsList.stream()
+                    .map(item -> counter.getAndIncrement() + ". " + item.getName() + " " + item.getQuantity())
+                    .collect(Collectors.joining("\n"));
+            listTextService.saveListText(userId, listAdded.getId(), formattedText);
 
         } catch (Exception e) {
             throw new Exception("Error while merging lists: " + e.getMessage());
