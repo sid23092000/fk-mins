@@ -40,7 +40,7 @@ public class ItemController {
                 item.setListId(listId);
                 items.add(item);
             }
-            itemService.addAllItemByNameAndQuantity(items);
+            itemService.addAllItemByNameAndQuantity(items, listId);
             return new ResponseEntity<>(ApiResponse.success("Item created successfully"), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
