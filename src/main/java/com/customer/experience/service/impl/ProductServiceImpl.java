@@ -45,7 +45,8 @@ public class ProductServiceImpl implements ProductService {
             }
             else
             {
-                List<Products> similarProducts=productRepository.findAllById(similarProductIds);
+
+                List<Products> similarProducts=productRepository.findAllByName(product.getName());
                 Products highestRatedProduct = Collections.max(similarProducts, Comparator.comparing(Products::getRating));
                 recommendedProducts.add(highestRatedProduct);
             }
